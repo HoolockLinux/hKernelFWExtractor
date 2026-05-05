@@ -21,7 +21,7 @@ export OBJDIR CC CFLAGS
 all: submodules dirs $(PLOOSHFINDER) $(OBJS) hKernelFWExtractor
 
 submodules:
-	@git submodule update --init --remote --recursive || true
+	@git submodule update --init --recursive || true
 
 dirs:
 	@mkdir -p $(OBJDIR)
