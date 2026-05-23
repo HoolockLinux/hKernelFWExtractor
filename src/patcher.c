@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include "formats/macho.h"
@@ -29,7 +29,7 @@ static char *pmp_fw_kexts[][2] = {
 void *kernel_buf;
 size_t kernel_len;
 
-#define xnu_va_to_ptr(addr)   macho_va_to_ptr(kernel_buf, macho_xnu_untag_va(addr))
+#define xnu_va_to_ptr(addr)  macho_va_to_ptr(kernel_buf, macho_xnu_untag_va(addr))
 #define find(function, sect) function(xnu_va_to_ptr(sect->addr), sect->size)
 
 static int process_kernel(const char *directory, int out_fd, int apple_fd)
@@ -115,16 +115,11 @@ int output_files(const char *directory, int *out_fd, int *apple_fd)
     return 0;
 }
 
-int main(int argc, char **argv)
+int process_kernel_path(const char *fw_path, const char *kpath)
 {
     int ret, in_fd, out_fd, apple_fd;
 
-    if (argc < 3) {
-        printf("Usage: %s <input kernel> <output directory>\n", argv[0]);
-        return 0;
-    }
-
-    in_fd = open(argv[1], O_RDONLY);
+    in_fd = open(kpath, O_RDONLY);
     if (in_fd < 0) {
         printf("Failed to open kernel!\n");
         return -1;
@@ -162,11 +157,11 @@ int main(int argc, char **argv)
         }
     }
 
-    ret = output_files(argv[2], &out_fd, &apple_fd);
+    ret = output_files(fw_path, &out_fd, &apple_fd);
     if (ret < 0)
         return -1;
 
-    int retval = process_kernel(argv[2], out_fd, apple_fd);
+    int retval = process_kernel(fw_path, out_fd, apple_fd);
 
     munmap(orig_kernel_buf, kernel_len);
     close(in_fd);
@@ -174,4 +169,17 @@ int main(int argc, char **argv)
     close(out_fd);
 
     return retval;
+}
+
+int main(int argc, const char *argv[])
+{
+    int ret;
+
+    if (argc < 3) {
+        printf("Usage: %s <output directory> <input kernel 1> [[input kernel 2]...]\n", argv[0]);
+        return 0;
+    }
+
+    for (int i = 2; i < argc; i++)
+        process_kernel_path(argv[1], argv[i]);
 }
