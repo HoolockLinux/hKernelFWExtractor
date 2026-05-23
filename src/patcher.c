@@ -21,6 +21,7 @@ static char *pmp_fw_kexts[][2] = {
     {"com.apple.driver.AppleS8001PMPFirmware", "s8001"},
     {"com.apple.driver.AppleT8010PMPFirmware", "t8010"},
     {"com.apple.driver.AppleT8011PMPFirmware", "t8011"},
+    {"com.apple.driver.AppleATV6PMPFirmware", "atv6"},
     /* T8012: PMP HW exists, doesn't seem used */
     {"com.apple.driver.AppleT8015PMPFirmware", "t8015"},
 };
