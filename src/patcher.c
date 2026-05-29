@@ -88,7 +88,7 @@ int output_files(const char *directory, int *out_fd, int *apple_fd)
         }
     }
 
-    *out_fd = open(directory, O_DIRECTORY | O_SEARCH);
+    *out_fd = open(directory, O_DIRECTORY);
     if (*out_fd < 0) {
         printf("Could not open destination directory %s: %d (%s)\n", directory, errno,
                strerror(errno));
@@ -104,7 +104,7 @@ int output_files(const char *directory, int *out_fd, int *apple_fd)
         }
     }
 
-    *apple_fd = openat(*out_fd, "apple", O_DIRECTORY | O_SEARCH);
+    *apple_fd = openat(*out_fd, "apple", O_DIRECTORY);
     if (*apple_fd < 0) {
         printf("Could not open destination directory %s/apple: %d (%s)\n", directory, errno,
                strerror(errno));
